@@ -22,14 +22,6 @@ steps:
     pip install -r requirements.txt
   displayName: 'Install Python dependencies'
 
-- script: |
-    echo "Installing Chrome browser..."
-    sudo apt-get update
-    sudo apt-get install google-chrome-stable -y
-    # Verify Chrome installation
-    google-chrome --version
-  displayName: 'Install Chrome Browser'
-
 # --- BrowserStack Configuration Task (Should run before your tests) ---
 - task: BrowserStackConfig@0
   displayName: 'BrowserStack Configuration'
