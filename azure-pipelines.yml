@@ -11,18 +11,18 @@ steps:
 - checkout: self # This step checks out your GitHub repository into the agent's workspace
   displayName: 'Checkout code from GitHub'
 
-- task: UsePythonVersion@0 # Azure DevOps task to set up Python
+- task: UsePythonVersion@0
   displayName: 'Set up Python 3.9'
   inputs:
-    versionSpec: '3.9' # Specify the Python version
+    versionSpec: '3.9'
 
-- script: | # Use 'script' for running shell commands
+- script: |
     echo "Installing Python dependencies..."
     python -m pip install --upgrade pip
     pip install -r requirements.txt
   displayName: 'Install Python dependencies'
 
-- script: | # Use 'script' for running shell commands
+- script: |
     echo "Installing Chrome browser..."
     sudo apt-get update
     sudo apt-get install google-chrome-stable -y
@@ -30,7 +30,19 @@ steps:
     google-chrome --version
   displayName: 'Install Chrome Browser'
 
-- script: | # Use 'script' for running shell commands
+# --- BrowserStack Configuration Task (Should run before your tests) ---
+- task: BrowserStackConfig@0
+  displayName: 'BrowserStack Configuration'
+  inputs:
+    BrowserStackServiceEndPoint: 'browserstack-connection' # Make sure you have a Service Connection named 'browserstack-connection' in Azure DevOps Project Settings -> Service connections
+
+- script: |
     echo "Running Selenium tests with Pytest..."
     python -m pytest tests/test_azure.py
   displayName: 'Run Selenium Tests'
+
+# --- BrowserStack Results Task (Should run after your tests) ---
+- task: BrowserStackResults@1
+  displayName: 'Publish BrowserStack Results'
+  inputs:
+    browserstackProduct: 'automate' # Use 'automate' for Selenium/WebDriver tests
