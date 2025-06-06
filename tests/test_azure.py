@@ -73,11 +73,11 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options as ChromeOptions # Using ChromeOptions for general browser settings
-from selenium.webdriver.remote.webdriver import WebDriver as RemoteWebDriver # For clarity
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.remote.webdriver import WebDriver as RemoteWebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import os # Import the os module to access environment variables
+import os
 import time
 
 # BrowserStack credentials and build name will be set by the Azure Pipeline task
@@ -91,7 +91,7 @@ BROWSERSTACK_URL = f"https://{BROWSERSTACK_USERNAME}:{BROWSERSTACK_ACCESS_KEY}@h
 @pytest.fixture(scope="module")
 def browser():
     # Define desired capabilities for BrowserStack
-    bstack_options = ChromeOptions() # You can use generic Options for Chrome
+    bstack_options = ChromeOptions() # Using ChromeOptions for general browser settings
     bstack_options.browser_version = "latest" # Use the latest Chrome version
     bstack_options.platform_name = "Windows 10" # Or "macOS Catalina", "Windows 11", etc.
 
@@ -102,10 +102,10 @@ def browser():
         "browserName": "Chrome",
         "browserVersion": "latest",
         "projectName": "Selenium Azure DevOps Demo",
-        "buildName": BROWSERSTACK_BUILD_NAME, # Set the build capability here!
+        "buildName": BROWSERSTACK_BUILD_NAME, # This is crucial for reporting
         "sessionName": "Wikipedia Azure DevOps Search Test",
-        "seleniumVersion": "4.x.x", # Replace with your actual Selenium version if specific
-        "local": "false" # Set to "true" if you're testing local websites with BrowserStack Local
+        # --- REMOVED THIS LINE: "seleniumVersion": "4.x.x", ---
+        "local": "false"
     })
 
     # Initialize Remote WebDriver to connect to BrowserStack
@@ -129,12 +129,11 @@ def test_azure(browser):
     search_input.send_keys("Azure DevOps")
     print("Typed 'Azure DevOps' into search box.")
 
-    search_input.send_keys(Keys.ENTER) # Press ENTER to submit search
+    search_input.send_keys(Keys.ENTER)
     print("Pressed ENTER to submit search.")
 
     time.sleep(3) # Give some time for results to load
 
-    # Assert that "Azure DevOps" is present in the title or the main heading of the results page
     try:
         page_heading = WebDriverWait(browser, 10).until(
             EC.presence_of_element_located((By.ID, "firstHeading"))
